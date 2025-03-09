@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MicahDitto</title>
+    <style>
+        /* Base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        body {
+            background-color: #0a0a0f;
+            color: #f0f0f0;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            font-weight: 900;
+            letter-spacing: 2px;
+            background: linear-gradient(to right, #7928CA, #FF0080);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(121, 40, 202, 0.3);
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            color: #a0a0ff;
+        }
+
+        p {
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            max-width: 600px;
+            color: rgba(240, 240, 240, 0.8);
+        }
+
+        .projects {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .project-card {
+            background: rgba(30, 30, 50, 0.3);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .project-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 40px rgba(78, 76, 178, 0.3);
+        }
+
+        .project-card h3 {
+            font-size: 1.4rem;
+            margin-bottom: 0.8rem;
+            color: #d4c0ff;
+        }
+
+        .project-card p {
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .project-card .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .project-card .tags span {
+            background: rgba(122, 87, 255, 0.2);
+            border: 1px solid rgba(122, 87, 255, 0.3);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            color: #c0b0ff;
+        }
+
+        .links {
+            margin-top: 1rem;
+        }
+
+        .links a {
+            text-decoration: none;
+            color: #7b68ee;
+            margin-right: 1rem;
+            font-weight: 600;
+            transition: color 0.2s ease;
+        }
+
+        .links a:hover {
+            color: #ff76f8;
+        }
+
+        footer {
+            text-align: center;
+            padding: 3rem 0;
+            opacity: 0.7;
+            margin-top: 4rem;
+            font-size: 0.9rem;
+        }
+
+        /* Night Sky with Moon */
+        .night-sky {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .moon {
+            position: absolute;
+            top: 80px;
+            right: 80px;
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle at 30% 30%, #ffffff, #d7d7ea);
+            border-radius: 50%;
+            box-shadow: 0 0 30px #a0a0ff, 0 0 80px rgba(160, 160, 255, 0.4);
+        }
+
+        .moon::after {
+            content: '';
+            position: absolute;
+            top: 15%;
+            left: 15%;
+            width: 20%;
+            height: 20%;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+        }
+
+        .stars {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle var(--twinkle-duration) ease-in-out infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 1; }
+        }
+
+        /* Floating Bubbles */
+        .bubbles {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .bubble {
+            position: absolute;
+            background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.02));
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 50%;
+            animation: float var(--float-duration) ease-in-out infinite alternate,
+            move var(--move-duration) linear infinite;
+            box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.1);
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) scale(1); }
+            100% { transform: translateY(-20px) scale(1.05); }
+        }
+
+        @keyframes move {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(100px); }
+        }
+
+        /* Abstract Blobs */
+        .blobs-container {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(40px);
+            opacity: 0.4;
+            mix-blend-mode: screen;
+        }
+
+        /* Breathing Blobs Section */
+        .breathing-section {
+            margin-top: 8rem;
+            padding: 4rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .breathing-container {
+            position: relative;
+            min-height: 400px;
+            z-index: 5;
+        }
+
+        .breathing-blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(30px);
+            opacity: 0.6;
+            animation: breathe 8s infinite ease-in-out;
+            mix-blend-mode: screen;
+            transition: background 3s ease;
+        }
+
+        @keyframes breathe {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+    </style>
+</head>
+<body>
+<!-- Night Sky with Moon -->
+<div class="night-sky">
+    <div class="moon"></div>
+    <div class="stars"></div>
+</div>
+
+<!-- Floating Bubbles -->
+<div class="bubbles"></div>
+
+<!-- Abstract Blobs Background -->
+<div class="blobs-container"></div>
+
+<!-- Main Content -->
+<div class="container">
+    <header>
+        <h1>MicahDitto</h1>
+    </header>
+
+    <div class="projects">
+        <div class="project-card">
+            <h3>Project Name</h3>
+            <p>A concise description of this amazing project and what technologies were used.</p>
+            <div class="tags">
+                <span>React</span>
+                <span>Node.js</span>
+                <span>MongoDB</span>
+            </div>
+            <div class="links">
+                <a href="#">View Project</a>
+                <a href="#">GitHub</a>
+            </div>
+        </div>
+
+        <div class="project-card">
+            <h3>Cool App</h3>
+            <p>An innovative solution to a complex problem using cutting-edge technologies.</p>
+            <div class="tags">
+                <span>Python</span>
+                <span>TensorFlow</span>
+                <span>AWS</span>
+            </div>
+            <div class="links">
+                <a href="#">View Project</a>
+                <a href="#">GitHub</a>
+            </div>
+        </div>
+
+        <div class="project-card">
+            <h3>Data Visualization</h3>
+            <p>Interactive visualization of complex datasets with beautiful, intuitive interfaces.</p>
+            <div class="tags">
+                <span>D3.js</span>
+                <span>Vue</span>
+                <span>CSS Grid</span>
+            </div>
+            <div class="links">
+                <a href="#">View Project</a>
+                <a href="#">GitHub</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Breathing Blobs Section -->
+    <div class="breathing-section">
+        <div class="breathing-container">
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2025 MicahDitto. All rights reserved. <a href="micahdittmar.com"></a></p>
+    </footer>
+</div>
+
+<!-- JavaScript for Animations -->
+<script>
+    // Create stars
+    const starsContainer = document.querySelector('.stars');
+    for (let i = 0; i < 200; i++) {
+        const star = document.createElement('div');
+        star.classList.add('star');
+
+        // Random size, position, and twinkle duration
+        const size = Math.random() * 2;
+        const top = Math.random() * 100;
+        const left = Math.random() * 100;
+        const duration = 3 + Math.random() * 7;
+
+        star.style.width = `${size}px`;
+        star.style.height = `${size}px`;
+        star.style.top = `${top}%`;
+        star.style.left = `${left}%`;
+        star.style.setProperty('--twinkle-duration', `${duration}s`);
+
+        starsContainer.appendChild(star);
+    }
+
+    // Create floating bubbles
+    const bubblesContainer = document.querySelector('.bubbles');
+    for (let i = 0; i < 15; i++) {
+        const bubble = document.createElement('div');
+        bubble.classList.add('bubble');
+
+        // Random size, position, transparency, and animation duration
+        const size = 40 + Math.random() * 120;
+        const top = Math.random() * 100;
+        const left = Math.random() * 100;
+        const floatDuration = 5 + Math.random() * 10;
+        const moveDuration = 15 + Math.random() * 30;
+
+        bubble.style.width = `${size}px`;
+        bubble.style.height = `${size}px`;
+        bubble.style.top = `${top}%`;
+        bubble.style.left = `${left}%`;
+        bubble.style.setProperty('--float-duration', `${floatDuration}s`);
+        bubble.style.setProperty('--move-duration', `${moveDuration}s`);
+        bubble.style.animationDelay = `${Math.random() * 10}s`;
+
+        bubblesContainer.appendChild(bubble);
+    }
+
+    // Create background blobs
+    const blobsContainer = document.querySelector('.blobs-container');
+    const colors = [
+        '#7928CA', '#FF0080', '#0070F3', '#00DFD8',
+        '#FF4D4D', '#F5A623', '#7B61FF', '#00C896'
+    ];
+
+    for (let i = 0; i < 8; i++) {
+        const blob = document.createElement('div');
+        blob.classList.add('blob');
+
+        const size = 200 + Math.random() * 300;
+        const top = Math.random() * 150 - 25;
+        const left = Math.random() * 150 - 25;
+        const color = colors[Math.floor(Math.random() * colors.length)];
+
+        blob.style.width = `${size}px`;
+        blob.style.height = `${size}px`;
+        blob.style.top = `${top}%`;
+        blob.style.left = `${left}%`;
+        blob.style.backgroundColor = color;
+
+        blobsContainer.appendChild(blob);
+    }
+
+    // Create breathing blobs
+    const breathingContainer = document.querySelector('.breathing-container');
+    for (let i = 0; i < 5; i++) {
+        const blob = document.createElement('div');
+        blob.classList.add('breathing-blob');
+
+        const size = 100 + Math.random() * 200;
+        const top = 20 + Math.random() * 60;
+        const left = Math.random() * 100;
+        let currentColorIndex = Math.floor(Math.random() * colors.length);
+
+        blob.style.width = `${size}px`;
+        blob.style.height = `${size}px`;
+        blob.style.top = `${top}%`;
+        blob.style.left = `${left}%`;
+        blob.style.backgroundColor = colors[currentColorIndex];
+        blob.style.animationDelay = `${Math.random() * 5}s`;
+
+        breathingContainer.appendChild(blob);
+
+        // Change color over time
+        setInterval(() => {
+            currentColorIndex = (currentColorIndex + 1) % colors.length;
+            blob.style.backgroundColor = colors[currentColorIndex];
+        }, 3000 + Math.random() * 5000);
+    }
+
+    // Move background blobs slowly
+    const blobs = document.querySelectorAll('.blob');
+    blobs.forEach(blob => {
+        let x = parseFloat(blob.style.left);
+        let y = parseFloat(blob.style.top);
+        let xDirection = Math.random() > 0.5 ? 1 : -1;
+        let yDirection = Math.random() > 0.5 ? 1 : -1;
+
+        setInterval(() => {
+            // Change direction occasionally
+            if (Math.random() < 0.02) xDirection *= -1;
+            if (Math.random() < 0.02) yDirection *= -1;
+
+            x += 0.05 * xDirection;
+            y += 0.05 * yDirection;
+
+            // Keep within bounds
+            if (x < -25) x = -25;
+            if (x > 125) x = 125;
+            if (y < -25) y = -25;
+            if (y > 125) y = 125;
+
+            blob.style.left = `${x}%`;
+            blob.style.top = `${y}%`;
+        }, 100);
+    });
+</script>
+</head>
+</body>
+</html>
