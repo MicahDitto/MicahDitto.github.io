@@ -135,8 +135,8 @@
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
+            right: 0;
+            bottom: 0;
             z-index: 1;
             overflow: hidden;
         }
@@ -187,8 +187,10 @@
         /* Floating Bubbles */
         .bubbles {
             position: fixed;
-            width: 100%;
-            height: 100%;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
             z-index: 2;
             pointer-events: none;
         }
@@ -216,8 +218,10 @@
         /* Abstract Blobs */
         .blobs-container {
             position: fixed;
-            width: 100%;
-            height: 100%;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
             overflow: hidden;
             z-index: 0;
             pointer-events: none;
@@ -233,16 +237,21 @@
 
         /* Breathing Blobs Section */
         .breathing-section {
-            margin-top: 8rem;
-            padding: 4rem 0;
-            position: relative;
-            overflow: hidden;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 3;
+            pointer-events: none;
         }
 
         .breathing-container {
-            position: relative;
-            min-height: 400px;
-            z-index: 5;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
         }
 
         .breathing-blob {
