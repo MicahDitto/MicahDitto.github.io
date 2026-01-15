@@ -225,19 +225,9 @@
             background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.02));
             border: 1px solid rgba(255, 255, 255, 0.05);
             border-radius: 50%;
-            animation: float var(--float-duration) ease-in-out infinite alternate,
-            move var(--move-duration) linear infinite;
             box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.1);
-        }
-
-        @keyframes float {
-            0% { transform: translateY(0) scale(1); }
-            100% { transform: translateY(-20px) scale(1.05); }
-        }
-
-        @keyframes move {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(100px); }
+            transition: transform 0.05s linear, opacity 0.3s ease-out;
+            will-change: transform, opacity;
         }
 
         /* Abstract Blobs */
@@ -447,29 +437,87 @@
         starsContainer.appendChild(star);
     }
 
-    // Create floating bubbles
+    // Create floating bubbles with dramatic warp speed effect
     const bubblesContainer = document.querySelector('.bubbles');
-    for (let i = 0; i < 15; i++) {
+    const bubbles = [];
+    const centerX = 50;
+    const centerY = 50;
+
+    // Many more particles for dense starfield
+    for (let i = 0; i < 60; i++) {
         const bubble = document.createElement('div');
         bubble.classList.add('bubble');
 
-        // Random size, position, transparency, and animation duration
-        const size = 40 + Math.random() * 120;
-        const top = Math.random() * 100;
-        const left = Math.random() * 100;
-        const floatDuration = 5 + Math.random() * 10;
-        const moveDuration = 15 + Math.random() * 30;
+        const angle = Math.random() * Math.PI * 2;
+        // Bias toward center - most start near middle
+        const distanceFromCenter = Math.pow(Math.random(), 1.5);
+
+        // Tighter cluster near center
+        const spread = distanceFromCenter * 35;
+        const startX = centerX + Math.cos(angle) * spread;
+        const startY = centerY + Math.sin(angle) * spread;
+
+        // Smaller sizes, starting tiny near center
+        const size = 5 + distanceFromCenter * 60;
+
+        // Depth layer determines base speed (closer = faster)
+        const depthLayer = Math.random();
+        const baseSpeed = 0.08 + depthLayer * 0.25;
 
         bubble.style.width = `${size}px`;
         bubble.style.height = `${size}px`;
-        bubble.style.top = `${top}%`;
-        bubble.style.left = `${left}%`;
-        bubble.style.setProperty('--float-duration', `${floatDuration}s`);
-        bubble.style.setProperty('--move-duration', `${moveDuration}s`);
-        bubble.style.animationDelay = `${Math.random() * 10}s`;
+        bubble.style.left = `${startX}%`;
+        bubble.style.top = `${startY}%`;
 
         bubblesContainer.appendChild(bubble);
+
+        bubbles.push({
+            element: bubble,
+            startX,
+            startY,
+            angle,
+            baseSpeed,
+            depthLayer,
+            baseSize: size
+        });
     }
+
+    // Warp speed telescope effect on scroll
+    window.addEventListener('scroll', () => {
+        const scrollY = window.scrollY;
+
+        bubbles.forEach(({ element, startX, startY, angle, baseSpeed, depthLayer, baseSize }) => {
+            // Exponential acceleration - faster as they move outward
+            const scrollFactor = scrollY * baseSpeed;
+            const acceleration = 1 + Math.pow(scrollFactor * 0.01, 1.8);
+            const moveDistance = scrollFactor * acceleration;
+
+            // Calculate new position flying outward
+            const moveX = Math.cos(angle) * moveDistance * 0.15;
+            const moveY = Math.sin(angle) * moveDistance * 0.15;
+
+            // Dramatic scaling - grows exponentially as it flies past
+            const distanceTraveled = Math.sqrt(moveX * moveX + moveY * moveY);
+            const scale = 1 + Math.pow(distanceTraveled * 0.03, 1.5);
+
+            // Stretch effect in direction of movement for speed feel
+            const stretchX = 1 + distanceTraveled * 0.008;
+            const stretchY = 1;
+            const rotateAngle = angle * (180 / Math.PI);
+
+            // Fade out as they exit - quick fade at edges
+            const currentX = startX + moveX;
+            const currentY = startY + moveY;
+            const edgeDistance = Math.max(
+                Math.abs(currentX - 50) / 40,
+                Math.abs(currentY - 50) / 40
+            );
+            const opacity = Math.max(0, Math.min(1, 1.2 - edgeDistance - (scale - 1) * 0.15));
+
+            element.style.transform = `translate(${moveX}vw, ${moveY}vh) rotate(${rotateAngle}deg) scale(${scale * stretchX}, ${scale * stretchY}) rotate(${-rotateAngle}deg)`;
+            element.style.opacity = opacity;
+        });
+    });
 
     // Create background blobs
     const blobsContainer = document.querySelector('.blobs-container');
